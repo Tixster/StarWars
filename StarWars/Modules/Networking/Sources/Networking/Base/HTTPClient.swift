@@ -34,7 +34,6 @@ public extension HTTPClient {
             guard let responseCode = (response as? HTTPURLResponse)?.statusCode else {
                 return .failure(.noResponse)
             }
-            
             switch responseCode {
             case 200...299:
                 if let decodeData = data.decode(model: responseModel) {
@@ -56,7 +55,6 @@ public extension HTTPClient {
                 return .failure(.unexpectedStatusCode(code: responseCode,
                                                       localized: responseCode.localStatusCode))
             }
-            
         } catch {
             return .failure(.request(localizedDiscription: error.localizedDescription))
         }

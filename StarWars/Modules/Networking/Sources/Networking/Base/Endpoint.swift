@@ -9,7 +9,7 @@ import Foundation
 
 public protocol Endpoint {
     var url: URL? { get }
-    var queryItems: [URLQueryItem] { get }
+    var queryItems: [URLQueryItem]? { get }
     var path: String { get }
     var method: HTTPRequestMethods { get }
     var header: [String: String]? { get }
