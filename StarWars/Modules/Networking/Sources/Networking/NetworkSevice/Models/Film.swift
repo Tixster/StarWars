@@ -10,18 +10,18 @@ import Foundation
 // MARK: - FilmsResponse
 public struct FilmsResponse: Codable {
     let count: Int
-    let results: [Film]
+    let results: [FilmResponse]
 }
 
 // MARK: - Film
-public struct Film: Codable {
-    let title: String
-    let episodeID: Int
-    let openingCrawl, director, producer, releaseDate: String
-    let charactersURL, planets, starships, vehicles: [String]
-    let species: [String]
-    let created, edited: String
-    let url: String
+public struct FilmResponse: Codable {
+    public let title: String
+    public let episodeID: Int
+    public let openingCrawl, director, producer, releaseDate: String
+    public let charactersURL, planets, starships, vehicles: [String]
+    public let species: [String]
+    public let created, edited: String
+    public let url: String
 
     enum CodingKeys: String, CodingKey {
         case title
