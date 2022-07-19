@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3E5E17172886824600F89FDC /* StarWarsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5E17162886824600F89FDC /* StarWarsApp.swift */; };
-		3E5E17192886824600F89FDC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5E17182886824600F89FDC /* ContentView.swift */; };
+		3E5E17192886824600F89FDC /* MainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5E17182886824600F89FDC /* MainScreen.swift */; };
 		3E5E171B2886824A00F89FDC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E5E171A2886824A00F89FDC /* Assets.xcassets */; };
 		3E5E171E2886824A00F89FDC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E5E171D2886824A00F89FDC /* Preview Assets.xcassets */; };
 		3E5E17202886824A00F89FDC /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5E171F2886824A00F89FDC /* Persistence.swift */; };
@@ -25,7 +25,7 @@
 /* Begin PBXFileReference section */
 		3E5E17132886824600F89FDC /* StarWars.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StarWars.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E5E17162886824600F89FDC /* StarWarsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarWarsApp.swift; sourceTree = "<group>"; };
-		3E5E17182886824600F89FDC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		3E5E17182886824600F89FDC /* MainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreen.swift; sourceTree = "<group>"; };
 		3E5E171A2886824A00F89FDC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3E5E171D2886824A00F89FDC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		3E5E171F2886824A00F89FDC /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -76,7 +76,7 @@
 				3E5E172E2886A2B800F89FDC /* StateMachine */,
 				3E5E17162886824600F89FDC /* StarWarsApp.swift */,
 				3E5E17332886AF9400F89FDC /* MainViewModel.swift */,
-				3E5E17182886824600F89FDC /* ContentView.swift */,
+				3E5E17182886824600F89FDC /* MainScreen.swift */,
 				3E5E171A2886824A00F89FDC /* Assets.xcassets */,
 				3E5E171F2886824A00F89FDC /* Persistence.swift */,
 				3E5E17212886824A00F89FDC /* StarWars.xcdatamodeld */,
@@ -200,7 +200,7 @@
 				3E5E17302886AB3300F89FDC /* StateMachineProtocol.swift in Sources */,
 				3E5E17202886824A00F89FDC /* Persistence.swift in Sources */,
 				3E5E17372886C1F600F89FDC /* Film.swift in Sources */,
-				3E5E17192886824600F89FDC /* ContentView.swift in Sources */,
+				3E5E17192886824600F89FDC /* MainScreen.swift in Sources */,
 				3E5E17172886824600F89FDC /* StarWarsApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -33,6 +33,7 @@ public class StateMachine<State, Event>: ObservableObject, StateMachineProtocol 
         fatalError("Override handleEvent(_:) before continuing.")
     }
     
+    @MainActor
     public func send(_ event: Event) {
         guard let state = handle(event) else { return }
         self.state = state

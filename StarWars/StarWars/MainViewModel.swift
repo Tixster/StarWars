@@ -14,50 +14,59 @@ final class MainViewModel: StateMachine<MainViewModel.FilmsListState, MainViewMo
     
     private let networkService: NetworkServiceProtocol
     
-    init(networkdService: NetworkServiceProtocol) {
+    init(networkdService: NetworkServiceProtocol = NetwordService()) {
         self.networkService = networkdService
         super.init(.initial)
     }
     
     override func handle(_ event: FilmsListEvent) -> FilmsListState? {
-        switch event {
-        case .onAppear:
-            break
-        case .retry:
-            break
-        case .reload:
-            break
-        case .fetchNextPage:
-            break
-        case .didFetchResultsFailure(let error):
+        switch(state, event) {
+        case (.initial, .onAppear):
+            fetchFilms()
+            return .loading
+        case (.loading, .didFetchResultsSuccessfully(let results)),
+            (.results, .didFetchResultsSuccessfully(let results)):
+            data = results
+            return .results
+        case (.loading, .didFetchResultsFailure(let error)):
             stateError = error
-        case .didFetchResultsEmpty:
+            return .error
+        case (.loading, .didFetchResultsEmpty):
+            return .empty
+        case (.results, .didFetchResultsEmpty):
             break
-        case .didFetchResultsSuccessfully(let films):
-            data = films
-        case .openFilmDetail(let film):
+        case (.results, .reload):
             break
+        case
+            (.empty, .retry),
+            (.error, .retry):
+            fetchFilms()
+            return .loading
+            
+        default:
+            fatalError("Event not handled...")
         }
+        
         return nil
     }
     
     override func handleStateUpdate(_ oldState: FilmsListState, new newState: FilmsListState) {
         switch(oldState, newState) {
         case (.initial, .loading):
-          break
+            break
         case (.loading, .results):
-          break
+            break
         case (.loading, .empty):
-          data = []
-          stateError = nil
+            data = []
+            stateError = nil
         case (.error, .loading):
-          stateError = nil
+            stateError = nil
         case
-          (.loading, .error),
-          (.empty, .loading):
-          data = []
+            (.loading, .error),
+            (.empty, .loading):
+            data = []
         default:
-          fatalError("Неопределённое место... Из \(oldState) вы пытаетесь попасть в \(newState)")
+            fatalError("Неопределённое место... Из \(oldState) вы пытаетесь попасть в \(newState)")
         }
     }
     
@@ -70,7 +79,7 @@ extension MainViewModel {
             let result = await networkService.fetchAllFilms()
             switch result {
             case .success(let films):
-                let filmsModels = films.map { film -> Film in
+                var filmsModels = films.map { film -> Film in
                     let filmModel: Film = .init(title: film.title,
                                                 year: film.releaseDate,
                                                 director: film.director,
@@ -79,36 +88,41 @@ extension MainViewModel {
                                                 charactersURL: film.charactersURL)
                     return filmModel
                 }
-                send(.didFetchResultsSuccessfully(filmsModels))
+                filterFilms(&filmsModels)
+                await send(.didFetchResultsSuccessfully(filmsModels))
             case .failure(let error):
-                send(.didFetchResultsFailure(error))
+                await send(.didFetchResultsFailure(error))
             }
         }
+    }
+    
+    func filterFilms(_ films: inout [Film]) {
+        films = films.sorted(by: { $0.episode < $1.episode })
     }
     
 }
 
 extension MainViewModel {
     enum FilmsListState: Equatable {
-      case initial
-      case loading
-      case results
-      case empty
-      case error
+        case initial
+        case loading
+        case results
+        case empty
+        case error
     }
     
     enum FilmsListEvent {
-      case onAppear
-
-      case retry
-      case reload
-      case fetchNextPage
-
-      case didFetchResultsSuccessfully(_ results: [Film])
-      case didFetchResultsFailure(_ error: Error)
-      case didFetchResultsEmpty
-
-      case openFilmDetail(_ film: Film)
+        case onAppear
+        
+        case retry
+        case reload
+        case fetchNextPage
+        
+        case didFetchResultsSuccessfully(_ results: [Film])
+        case didFetchResultsFailure(_ error: Error)
+        case didFetchResultsEmpty
+        
+        case openFilmDetail(_ film: Film)
     }
     
 }

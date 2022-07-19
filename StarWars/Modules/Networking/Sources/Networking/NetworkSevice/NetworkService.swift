@@ -15,11 +15,16 @@ public protocol NetworkServiceProtocol: HTTPClient {
 
 public class NetwordService: NetworkServiceProtocol {
     
+    public init() {}
+    
     public func fetchAllFilms() async -> Result<[FilmResponse], HTTPRequestError> {
         let filmsResponse = await sendRequest(endpoint: FilmsEndpoint.all,
                                               responseModel: FilmsResponse.self)
         switch filmsResponse {
         case .success(let response):
+            #if DEBUG
+            print(response.results)
+            #endif
             return .success(response.results)
         case .failure(let error):
             return .failure(error)

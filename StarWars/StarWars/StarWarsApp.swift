@@ -13,7 +13,7 @@ struct StarWarsApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainScreen(viewModel: MainViewModel())
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
