@@ -7,12 +7,16 @@
 
 import Foundation
 import Networking
+import CoreData
 
 final class MainViewModel: StateMachine<MainViewModel.FilmsListState, MainViewModel.FilmsListEvent>  {
     
-    public var data: [Film] = []
+    public var data: [FilmModel] = []
     
     private let networkService: NetworkServiceProtocol
+    private var persistenceController: PersistenceController {
+        return PersistenceController.shared
+    }
     
     init(networkdService: NetworkServiceProtocol = NetwordService()) {
         self.networkService = networkdService
@@ -72,22 +76,31 @@ final class MainViewModel: StateMachine<MainViewModel.FilmsListState, MainViewMo
     
 }
 
-extension MainViewModel {
+private extension MainViewModel {
     
     func fetchFilms() {
+        guard !fetchFromCoreData() else { return }
         Task {
             let result = await networkService.fetchAllFilms()
             switch result {
             case .success(let films):
-                var filmsModels = films.map { film -> Film in
-                    let filmModel: Film = .init(title: film.title,
+                var filmsModels = films.map { film -> FilmModel in
+                    let filmModel: FilmModel = .init(title: film.title,
                                                 year: film.releaseDate,
                                                 director: film.director,
                                                 producer: film.producer,
                                                 episode: film.episodeID,
                                                 charactersURL: film.charactersURL)
+                    let filmsContext: Film = .init(context: persistenceController.container.viewContext)
+                    filmsContext.title = film.title
+                    filmsContext.year = film.releaseDate
+                    filmsContext.director = film.director
+                    filmsContext.producer = film.producer
+                    filmsContext.episode = Int16(film.episodeID)
+                    filmsContext.charactersURL = film.charactersURL
                     return filmModel
                 }
+                persistenceController.save()
                 filterFilms(&filmsModels)
                 await send(.didFetchResultsSuccessfully(filmsModels))
             case .failure(let error):
@@ -96,8 +109,30 @@ extension MainViewModel {
         }
     }
     
-    func filterFilms(_ films: inout [Film]) {
+    func filterFilms(_ films: inout [FilmModel]) {
         films = films.sorted(by: { $0.episode < $1.episode })
+    }
+    
+    func fetchFromCoreData() -> Bool {
+        let fetchRequest: NSFetchRequest = Film.fetchRequest()
+        let sort: NSSortDescriptor = .init(key: #keyPath(Film.episode), ascending: true)
+        fetchRequest.sortDescriptors = [sort]
+        do {
+            let films = try persistenceController.container.viewContext.fetch(fetchRequest)
+            let filmsModel = films.map({ return FilmModel.convertFromCoreData(model: $0) })
+            if films.isEmpty {
+                return false
+            } else {
+                Task {
+                    print(filmsModel)
+                    await send(.didFetchResultsSuccessfully(filmsModel))
+                }
+                return true
+            }
+        } catch let error as NSError {
+            print("Cloud not fetch: \(error), \(error.userInfo)")
+            return false
+        }
     }
     
 }
@@ -118,11 +153,11 @@ extension MainViewModel {
         case reload
         case fetchNextPage
         
-        case didFetchResultsSuccessfully(_ results: [Film])
+        case didFetchResultsSuccessfully(_ results: [FilmModel])
         case didFetchResultsFailure(_ error: Error)
         case didFetchResultsEmpty
         
-        case openFilmDetail(_ film: Film)
+        case openFilmDetail(_ film: FilmModel)
     }
     
 }

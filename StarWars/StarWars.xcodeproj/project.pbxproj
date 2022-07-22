@@ -20,6 +20,10 @@
 		3E5E17372886C1F600F89FDC /* Film.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5E17362886C1F600F89FDC /* Film.swift */; };
 		3E5E17392886C7CE00F89FDC /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5E17382886C7CE00F89FDC /* Character.swift */; };
 		3E5E173B2886C88300F89FDC /* Planet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5E173A2886C88300F89FDC /* Planet.swift */; };
+		3E6128ED288ACF0700C5972D /* Film+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E6128EB288ACF0700C5972D /* Film+CoreDataClass.swift */; };
+		3E6128EE288ACF0700C5972D /* Film+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E6128EC288ACF0700C5972D /* Film+CoreDataProperties.swift */; };
+		3E6128F5288AD17800C5972D /* Character+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E6128F3288AD17800C5972D /* Character+CoreDataClass.swift */; };
+		3E6128F6288AD17800C5972D /* Character+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E6128F4288AD17800C5972D /* Character+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +41,10 @@
 		3E5E17362886C1F600F89FDC /* Film.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Film.swift; sourceTree = "<group>"; };
 		3E5E17382886C7CE00F89FDC /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
 		3E5E173A2886C88300F89FDC /* Planet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planet.swift; sourceTree = "<group>"; };
+		3E6128EB288ACF0700C5972D /* Film+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Film+CoreDataClass.swift"; path = "StarWars/CoreDataModels/Film+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		3E6128EC288ACF0700C5972D /* Film+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Film+CoreDataProperties.swift"; path = "StarWars/CoreDataModels/Film+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		3E6128F3288AD17800C5972D /* Character+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Character+CoreDataClass.swift"; path = "StarWars/CoreDataModels/Character+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		3E6128F4288AD17800C5972D /* Character+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Character+CoreDataProperties.swift"; path = "StarWars/CoreDataModels/Character+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,11 +80,11 @@
 		3E5E17152886824600F89FDC /* StarWars */ = {
 			isa = PBXGroup;
 			children = (
+				3E6128F8288AD23500C5972D /* Screens */,
+				3E6128F7288AD21F00C5972D /* CoreDataModels */,
 				3E5E17352886BA1E00F89FDC /* Models */,
 				3E5E172E2886A2B800F89FDC /* StateMachine */,
 				3E5E17162886824600F89FDC /* StarWarsApp.swift */,
-				3E5E17332886AF9400F89FDC /* MainViewModel.swift */,
-				3E5E17182886824600F89FDC /* MainScreen.swift */,
 				3E5E171A2886824A00F89FDC /* Assets.xcassets */,
 				3E5E171F2886824A00F89FDC /* Persistence.swift */,
 				3E5E17212886824A00F89FDC /* StarWars.xcdatamodeld */,
@@ -117,6 +125,34 @@
 				3E5E173A2886C88300F89FDC /* Planet.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		3E6128F7288AD21F00C5972D /* CoreDataModels */ = {
+			isa = PBXGroup;
+			children = (
+				3E6128F3288AD17800C5972D /* Character+CoreDataClass.swift */,
+				3E6128F4288AD17800C5972D /* Character+CoreDataProperties.swift */,
+				3E6128EB288ACF0700C5972D /* Film+CoreDataClass.swift */,
+				3E6128EC288ACF0700C5972D /* Film+CoreDataProperties.swift */,
+			);
+			path = CoreDataModels;
+			sourceTree = "<group>";
+		};
+		3E6128F8288AD23500C5972D /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				3E6128F9288AD24000C5972D /* Main */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		3E6128F9288AD24000C5972D /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				3E5E17332886AF9400F89FDC /* MainViewModel.swift */,
+				3E5E17182886824600F89FDC /* MainScreen.swift */,
+			);
+			path = Main;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -196,12 +232,16 @@
 				3E5E173B2886C88300F89FDC /* Planet.swift in Sources */,
 				3E5E17342886AF9400F89FDC /* MainViewModel.swift in Sources */,
 				3E5E17232886824A00F89FDC /* StarWars.xcdatamodeld in Sources */,
+				3E6128F5288AD17800C5972D /* Character+CoreDataClass.swift in Sources */,
 				3E5E17322886AC9E00F89FDC /* StateMachine.swift in Sources */,
 				3E5E17302886AB3300F89FDC /* StateMachineProtocol.swift in Sources */,
+				3E6128F6288AD17800C5972D /* Character+CoreDataProperties.swift in Sources */,
+				3E6128ED288ACF0700C5972D /* Film+CoreDataClass.swift in Sources */,
 				3E5E17202886824A00F89FDC /* Persistence.swift in Sources */,
 				3E5E17372886C1F600F89FDC /* Film.swift in Sources */,
 				3E5E17192886824600F89FDC /* MainScreen.swift in Sources */,
 				3E5E17172886824600F89FDC /* StarWarsApp.swift in Sources */,
+				3E6128EE288ACF0700C5972D /* Film+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

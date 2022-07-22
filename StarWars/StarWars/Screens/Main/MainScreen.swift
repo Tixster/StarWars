@@ -17,9 +17,9 @@ struct MainScreen: View {
         VStack {
             switch (viewModel.state) {
             case .initial: Text("Initial")
-            case .loading: Text("Loading...")
+            case .loading: ProgressView("Loading...")
             case .empty: Text("No Results")
-            case .error: Text("Error")
+            case .error: Text(viewModel.stateError?.localizedDescription ?? "")
             case .results:
                 NavigationView {
                     List {
@@ -27,7 +27,14 @@ struct MainScreen: View {
                             NavigationLink {
                                 Text(film.title)
                             } label: {
-                                cell(film)
+                                VStack {
+                                    cell(.init(title: film.title,
+                                               year: film.year,
+                                               director: film.director,
+                                               producer: film.producer,
+                                               episode: film.episode,
+                                               charactersURL: film.charactersURL))
+                                }
                             }
                         }
                     }
@@ -45,7 +52,7 @@ struct MainScreen: View {
 private extension MainScreen {
 
     @ViewBuilder
-    func cell(_ film: Film) -> some View {
+    func cell(_ film: FilmModel) -> some View {
         VStack(alignment: .leading) {
             Text(film.title)
                 .bold()

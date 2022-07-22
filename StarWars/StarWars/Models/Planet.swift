@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Planet: Identifiable {
+struct PlanetModel: Identifiable {
     var id: String {
         return name
     }

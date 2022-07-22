@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Character: Identifiable {
+struct CharacterModel: Identifiable {
     var id: String {
         return name
     }
@@ -15,4 +15,12 @@ struct Character: Identifiable {
     let gender: String
     let birthYear: String
     let homeworld: String
+    
+    static func convertFromCoreData(model: Character) -> Self {
+        return .init(name: model.name,
+                     gender: model.gender,
+                     birthYear: model.birthYear,
+                     homeworld: model.homeWorldURL)
+    }
+    
 }

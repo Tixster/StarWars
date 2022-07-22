@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Film: Identifiable {
+struct FilmModel: Identifiable {
     var id: String {
         return title
     }
@@ -17,4 +17,14 @@ struct Film: Identifiable {
     let producer: String
     let episode: Int
     let charactersURL: [String]
+    
+    static func convertFromCoreData(model: Film) -> Self {
+        return .init(title: model.title,
+                     year: model.year,
+                     director: model.director,
+                     producer: model.producer,
+                     episode: Int(model.episode),
+                     charactersURL: model.charactersURL)
+    }
+    
 }
