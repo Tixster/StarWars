@@ -8,13 +8,13 @@
 import Foundation
 
 public struct CharacterResponse: Codable {
-    let name, height, mass, hairColor: String
-    let skinColor, eyeColor, birthYear, gender: String
-    let homeworld: String
-    let filmsURL: [String]
-    let vehicles, starships: [String]
-    let created, edited: String
-    let url: String
+    public let name, height, mass, hairColor: String
+    public let skinColor, eyeColor, birthYear, gender: String
+    public let homeworld: String
+    public let filmsURL: [String]
+    public let vehicles, starships: [String]
+    public let created, edited: String
+    public let url: String
 
     enum CodingKeys: String, CodingKey {
         case name, height, mass
