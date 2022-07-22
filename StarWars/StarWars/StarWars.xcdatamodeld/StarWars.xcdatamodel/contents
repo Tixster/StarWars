@@ -6,7 +6,7 @@
         <attribute name="homeWorldURL" attributeType="String"/>
         <attribute name="index" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
-        <relationship name="characterToFilm" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Film" inverseName="filmToCharaters" inverseEntity="Film"/>
+        <relationship name="characterToFilm" toMany="YES" deletionRule="Nullify" destinationEntity="Film" inverseName="filmToCharaters" inverseEntity="Film"/>
         <relationship name="characterToHomeworld" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Planet" inverseName="homeworldToCharacter" inverseEntity="Planet"/>
     </entity>
     <entity name="Film" representedClassName="Film" syncable="YES">
@@ -16,20 +16,20 @@
         <attribute name="producer" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
         <attribute name="year" attributeType="String"/>
-        <relationship name="filmToCharaters" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Character" inverseName="characterToFilm" inverseEntity="Character"/>
+        <relationship name="filmToCharaters" toMany="YES" deletionRule="Nullify" destinationEntity="Character" inverseName="characterToFilm" inverseEntity="Character"/>
     </entity>
-    <entity name="Planet" representedClassName="Planet" syncable="YES" codeGenerationType="class">
+    <entity name="Planet" representedClassName="Planet" syncable="YES">
         <attribute name="climate" attributeType="String"/>
         <attribute name="diameter" attributeType="String"/>
-        <attribute name="gravity" optional="YES" attributeType="String"/>
+        <attribute name="gravity" attributeType="String"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="population" attributeType="String"/>
         <attribute name="terrain" attributeType="String"/>
-        <relationship name="homeworldToCharacter" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Character" inverseName="characterToHomeworld" inverseEntity="Character"/>
+        <relationship name="homeworldToCharacter" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Character" inverseName="characterToHomeworld" inverseEntity="Character"/>
     </entity>
     <elements>
         <element name="Character" positionX="-481.8956909179688" positionY="-17.36433410644531" width="128" height="134"/>
         <element name="Film" positionX="-234.3697509765625" positionY="-130.4723052978516" width="128" height="134"/>
-        <element name="Planet" positionX="-69.7545166015625" positionY="-32.1044921875" width="128" height="148"/>
+        <element name="Planet" positionX="-69.7545166015625" positionY="-32.1044921875" width="128" height="134"/>
     </elements>
 </model>

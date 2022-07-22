@@ -10,7 +10,6 @@ import CoreData
 
 struct MainScreen: View {
 
-    @Environment(\.managedObjectContext) private var viewContext
     @StateObject var viewModel: MainViewModel
     
     var body: some View {
@@ -25,7 +24,8 @@ struct MainScreen: View {
                     List {
                         ForEach(viewModel.data, id: \.id) { film in
                             NavigationLink {
-                                Text(film.title)
+                                CharactersScreen(viewModel: .init(networkdService: viewModel.networkService,
+                                                                  film: film))
                             } label: {
                                 VStack {
                                     cell(.init(title: film.title,

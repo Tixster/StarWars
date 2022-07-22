@@ -10,17 +10,17 @@ import Networking
 import CoreData
 
 final class MainViewModel: StateMachine<MainViewModel.FilmsListState, MainViewModel.FilmsListEvent>  {
-    
-    public var data: [FilmModel] = []
-    
-    private let networkService: NetworkServiceProtocol
-    private var persistenceController: PersistenceController {
-        return PersistenceController.shared
-    }
-    
+
     init(networkdService: NetworkServiceProtocol = NetwordService()) {
         self.networkService = networkdService
         super.init(.initial)
+    }
+    
+    public var data: [FilmModel] = []
+    public let networkService: NetworkServiceProtocol
+
+    private var persistenceController: PersistenceController {
+        return PersistenceController.shared
     }
     
     override func handle(_ event: FilmsListEvent) -> FilmsListState? {
@@ -46,7 +46,7 @@ final class MainViewModel: StateMachine<MainViewModel.FilmsListState, MainViewMo
             (.error, .retry):
             fetchFilms()
             return .loading
-            
+        case (.results, .onAppear): break
         default:
             fatalError("Event not handled...")
         }
@@ -70,7 +70,7 @@ final class MainViewModel: StateMachine<MainViewModel.FilmsListState, MainViewMo
             (.empty, .loading):
             data = []
         default:
-            fatalError("Неопределённое место... Из \(oldState) вы пытаетесь попасть в \(newState)")
+            fatalError("Неопределённое состояние... Из \(oldState) вы пытаетесь попасть в \(newState)")
         }
     }
     

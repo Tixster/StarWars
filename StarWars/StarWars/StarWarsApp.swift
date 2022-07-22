@@ -24,7 +24,7 @@ struct StarWarsApp: App {
         .onChange(of: scenePhase) { newPhase in
             switch newPhase {
             case .background: persistenceController.save()
-            case .inactive: return
+            case .inactive: persistenceController.save()
             case .active: return
             @unknown default:return
             }
