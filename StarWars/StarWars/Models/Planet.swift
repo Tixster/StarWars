@@ -17,4 +17,14 @@ struct PlanetModel: Identifiable {
     let gravity: String
     let terrain: String
     let population: String
+    
+    static func convertFromCoreData(model: Planet) -> Self {
+        return .init(name: model.name,
+                     diameter: model.diameter,
+                     climate: model.climate,
+                     gravity: model.gravity,
+                     terrain: model.terrain,
+                     population: model.population)
+    }
+    
 }
