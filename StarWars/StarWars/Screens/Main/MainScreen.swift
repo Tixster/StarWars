@@ -32,23 +32,30 @@ private extension MainScreen {
     
     var resultScreen: some View {
         NavigationView {
-            List {
-                ForEach(viewModel.data, id: \.id) { film in
-                    NavigationLink {
-                        CharactersScreen(viewModel: .init(networkdService: viewModel.networkService,
-                                                          film: film))
-                    } label: {
-                        VStack {
-                            cell(.init(title: film.title,
-                                       year: film.year,
-                                       director: film.director,
-                                       producer: film.producer,
-                                       episode: film.episode,
-                                       charactersURL: film.charactersURL))
+            Group {
+                if !viewModel.searchText.isEmpty && viewModel.searchData.isEmpty {
+                    Text("No Search Result.")
+                } else {
+                    List {
+                        ForEach(viewModel.searchData.isEmpty ? viewModel.data : viewModel.searchData, id: \.id) { film in
+                            NavigationLink {
+                                CharactersScreen(viewModel: .init(networkdService: viewModel.networkService,
+                                                                  film: film))
+                            } label: {
+                                VStack {
+                                    cell(.init(title: film.title,
+                                               year: film.year,
+                                               director: film.director,
+                                               producer: film.producer,
+                                               episode: film.episode,
+                                               charactersURL: film.charactersURL))
+                                }
+                            }
                         }
                     }
                 }
             }
+            .searchable(text: $viewModel.searchText)
             .navigationTitle("Star Wars Films")
         }
     }

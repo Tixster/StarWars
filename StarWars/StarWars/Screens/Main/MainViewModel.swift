@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 import Networking
 
 final class MainViewModel: StateMachine<MainViewModel.FilmsListState, MainViewModel.FilmsListEvent>  {
@@ -13,16 +14,21 @@ final class MainViewModel: StateMachine<MainViewModel.FilmsListState, MainViewMo
     init(networkdService: NetworkServiceProtocol = NetwordService()) {
         self.networkService = networkdService
         super.init(.initial)
+        binding()
     }
     
     // MARK: - PUBLIC VAR
-    public var data: [FilmModel] = []
+    @Published public var searchText: String = ""
+    
+    public private(set) var data: [FilmModel] = []
+    public private(set) var searchData: [FilmModel] = []
     public let networkService: NetworkServiceProtocol
     
     // MARK: - PRIVATE VAR
     private var persistenceController: PersistenceController {
         return PersistenceController.shared
     }
+    private var store: Set<AnyCancellable> = []
     
     override func handle(_ event: FilmsListEvent) -> FilmsListState? {
         switch(state, event) {
@@ -113,6 +119,21 @@ private extension MainViewModel {
             await send(.didFetchResultsSuccessfully(filmsModel))
         }
         return true
+    }
+    
+    func binding() {
+        $searchText
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] serarchStr in
+                self?.searchData.removeAll()
+                self?.data.forEach({
+                    let text = $0.title + " \($0.episode)"
+                    if text.contains(serarchStr) {
+                        self?.searchData.append($0)
+                    }
+                })
+            }
+            .store(in: &store)
     }
     
 }
