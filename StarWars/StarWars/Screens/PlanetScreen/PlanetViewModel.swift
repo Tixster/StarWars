@@ -7,22 +7,27 @@
 
 import Foundation
 import Networking
-import CoreData
-
 
 final class PlanetViewModel: StateMachine<PlanetViewModel.PlanetListState, PlanetViewModel.PlanetListEvent> {
     
-    init(networkdService: NetworkServiceProtocol = NetwordService(), character: CharacterModel) {
+    init(networkdService: NetworkServiceProtocol = NetwordService(), character: CharacterModel?, error: Error?) {
         self.character = character
         self.networkService = networkdService
         super.init(.initial)
+        if let error = error {
+            Task {
+                await send(.didFetchResultsFailure(error))
+            }
+        }
     }
     
-    public var data: PlanetModel?
+    // MARK: - PUBLIC VAR
+    public var data: PlanetModel!
     
+    // MARK: - PRIVATE VAR
     private let networkService: NetworkServiceProtocol
     private var fetchTask: Task<Void, Never>?
-    private let character: CharacterModel
+    private let character: CharacterModel?
     private var persistenceController: PersistenceController {
         return PersistenceController.shared
     }
@@ -65,14 +70,14 @@ final class PlanetViewModel: StateMachine<PlanetViewModel.PlanetListState, Plane
         case (.loading, .results):
             break
         case (.loading, .empty):
-            data = nil
+            data = .nilMock
             stateError = nil
         case (.error, .loading):
             stateError = nil
         case
             (.loading, .error),
             (.empty, .loading):
-            data = nil
+            data = .nilMock
         default:
             fatalError("Неопределённое состояние... Из \(oldState) вы пытаетесь попасть в \(newState)")
         }
@@ -84,6 +89,7 @@ private extension PlanetViewModel {
     
     func fetchPlanet() {
         guard !fetchFromCoreData() else { return }
+        guard let character = character else { return }
         let idStr = character.homeworld.matches(for: "\\d+").first!
         guard let id = Int(idStr) else { return }
         Task {
@@ -96,23 +102,7 @@ private extension PlanetViewModel {
                                                      gravity: result.gravity,
                                                      terrain: result.terrain,
                                                      population: result.population)
-                do {
-                    let planetContext: Planet = .init(context: persistenceController.container.viewContext)
-                    planetContext.name = result.name
-                    planetContext.diameter = result.diameter
-                    planetContext.climate = result.climate
-                    planetContext.gravity = result.gravity
-                    planetContext.terrain = result.terrain
-                    planetContext.population = result.population
-                    let fetchReques: NSFetchRequest = Character.fetchRequest()
-                    let predicate: NSPredicate = .init(format: "%K == %@", #keyPath(Character.name), character.name)
-                    fetchReques.predicate = predicate
-                    let character: Character = try persistenceController.container.viewContext.fetch(fetchReques).first!
-                    character.characterToHomeworld = planetContext
-                    planetContext.addToHomeworldToCharacter(character)
-                } catch {
-                    print(error.localizedDescription)
-                }
+                persistenceController.savePlanet(from: planetModel, for: character.name)
                 await send(.didFetchResultsSuccessfully(planetModel))
             case .failure(let error):
                 await send(.didFetchResultsFailure(error))
@@ -121,27 +111,14 @@ private extension PlanetViewModel {
     }
     
     func fetchFromCoreData() -> Bool {
-        let fetchRequest: NSFetchRequest = Planet.fetchRequest()
-        let predicate: NSPredicate = .init(format: "ANY homeworldToCharacter.name = %@", character.name)
-        fetchRequest.predicate = predicate
-        do {
-            let planets = try persistenceController.container.viewContext.fetch(fetchRequest)
-            if planets.isEmpty {
-                return false
-            } else {
-                let planetModel: PlanetModel = .convertFromCoreData(model: planets.first!)
-                Task {
-                    await send(.didFetchResultsSuccessfully(planetModel))
-                }
-                return true
-            }
-        } catch let error as NSError {
-            print("Cloud not fetch: \(error), \(error.userInfo)")
-            return false
+        guard let character = character else { return false }
+        guard let planetModel = persistenceController.getPlanet(for: character.name) else { return false }
+        Task {
+            await send(.didFetchResultsSuccessfully(planetModel))
         }
+        return true
     }
-    
-    
+
 }
 
 extension PlanetViewModel {

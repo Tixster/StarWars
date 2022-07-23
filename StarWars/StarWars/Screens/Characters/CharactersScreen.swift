@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Networking
 
 struct CharactersScreen: View {
     
@@ -14,40 +15,60 @@ struct CharactersScreen: View {
     var body: some View {
         Group {
             switch (viewModel.state) {
-            case .initial: Text("Initial")
-            case .loading: ProgressView("Loading...")
+            case .initial, .loading: ProgressView("Loading...")
             case .empty: Text("No Results")
             case .error: Text(viewModel.stateError?.localizedDescription ?? "")
-            case .results:
-                List {
-                    ForEach(0..<viewModel.data.count, id: \.self) { index in
-                        NavigationLink {
-                            Text("1234")
-                        } label: {
-                            VStack {
-                                let result = viewModel.data[index]
-                                switch result {
-                                case .success(let model):
-                                    VStack(alignment: .leading) {
-                                        Text(model.name)
-                                            .bold()
-                                        Text("Gender: \(model.gender)")
-                                        Text("Birth Year: \(model.birthYear)")
-                                    }
-                                    
-                                case .failure(let error):
-                                    Text(error.localizedDescription)
-                                }
-                            }
-                        }
-                    }
-                }
-                .navigationTitle("Star Wars Characters")
+            case .results: resultScreen
             }
-
         }
         .onAppear {
             viewModel.send(.onAppear)
         }
     }
+    
+}
+
+private extension CharactersScreen {
+    
+    var resultScreen: some View {
+        List {
+            ForEach(0..<viewModel.data.count, id: \.self) { index in
+                let result = viewModel.data[index]
+                NavigationLink {
+                    PlanetScreen(viewModel: .init(character: getResult(from: result).resultModel,
+                                                  error: getResult(from: result).resultError))
+                } label: {
+                    VStack {
+                        switch result {
+                        case .success(let model):
+                            cell(model)
+                        case .failure(let error):
+                            Text(error.localizedDescription)
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Star Wars: \(viewModel.filmTitle)")
+    }
+    
+    @ViewBuilder
+    func cell(_ model: CharacterModel) -> some View {
+        VStack(alignment: .leading) {
+            Text(model.name)
+                .bold()
+            Text("Gender: \(model.gender)")
+            Text("Birth Year: \(model.birthYear)")
+        }
+    }
+    
+    func getResult(from result: Result<CharacterModel, HTTPRequestError>) -> (resultModel: CharacterModel?, resultError: Error?) {
+        switch result {
+        case .success(let resultModel):
+            return (resultModel, nil)
+        case .failure(let resultError):
+            return (nil, resultError)
+        }
+    }
+    
 }

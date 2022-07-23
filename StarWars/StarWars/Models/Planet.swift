@@ -27,4 +27,13 @@ struct PlanetModel: Identifiable {
                      population: model.population)
     }
     
+    static var nilMock: Self {
+        return .init(name: "nil",
+                     diameter: "nil",
+                     climate: "nil",
+                     gravity: "nil",
+                     terrain: "nil",
+                     population: "nil")
+    }
+    
 }

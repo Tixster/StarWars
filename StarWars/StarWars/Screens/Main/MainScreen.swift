@@ -15,31 +15,10 @@ struct MainScreen: View {
     var body: some View {
         VStack {
             switch (viewModel.state) {
-            case .initial: Text("Initial")
-            case .loading: ProgressView("Loading...")
+            case .initial, .loading: ProgressView("Loading...")
             case .empty: Text("No Results")
             case .error: Text(viewModel.stateError?.localizedDescription ?? "")
-            case .results:
-                NavigationView {
-                    List {
-                        ForEach(viewModel.data, id: \.id) { film in
-                            NavigationLink {
-                                CharactersScreen(viewModel: .init(networkdService: viewModel.networkService,
-                                                                  film: film))
-                            } label: {
-                                VStack {
-                                    cell(.init(title: film.title,
-                                               year: film.year,
-                                               director: film.director,
-                                               producer: film.producer,
-                                               episode: film.episode,
-                                               charactersURL: film.charactersURL))
-                                }
-                            }
-                        }
-                    }
-                    .navigationTitle("Star Wars Films")
-                }
+            case .results: resultScreen
             }
         }
         .onAppear {
@@ -50,6 +29,29 @@ struct MainScreen: View {
 }
 
 private extension MainScreen {
+    
+    var resultScreen: some View {
+        NavigationView {
+            List {
+                ForEach(viewModel.data, id: \.id) { film in
+                    NavigationLink {
+                        CharactersScreen(viewModel: .init(networkdService: viewModel.networkService,
+                                                          film: film))
+                    } label: {
+                        VStack {
+                            cell(.init(title: film.title,
+                                       year: film.year,
+                                       director: film.director,
+                                       producer: film.producer,
+                                       episode: film.episode,
+                                       charactersURL: film.charactersURL))
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Star Wars Films")
+        }
+    }
 
     @ViewBuilder
     func cell(_ film: FilmModel) -> some View {
@@ -68,7 +70,6 @@ private extension MainScreen {
     }
 
 }
-
 
 struct MainScreen_Previews: PreviewProvider {
     static var previews: some View {
