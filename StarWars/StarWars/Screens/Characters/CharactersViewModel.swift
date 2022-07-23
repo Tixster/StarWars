@@ -7,7 +7,6 @@
 
 import Foundation
 import Networking
-import CoreData
 
 final class CharactersViewModel: StateMachine<CharactersViewModel.CharactersListState, CharactersViewModel.CharactersListEvent> {
     
@@ -18,10 +17,14 @@ final class CharactersViewModel: StateMachine<CharactersViewModel.CharactersList
         super.init(.initial)
     }
     
+    // MARK: - PUBLIC VAR
     public var data: [Result<CharacterModel, HTTPRequestError>] = []
+    public var filmTitle: String {
+        return film.title
+    }
     
+    // MARK: - PRIVATE VAR
     private let networkService: NetworkServiceProtocol
-    private var fetchTask: Task<Void, Never>?
     private let film: FilmModel
     private let charactersURL: [String]
     private lazy var filmPredicate: NSPredicate = {
@@ -94,69 +97,57 @@ private extension CharactersViewModel {
     func fetchCharacters() {
         guard data.isEmpty else { return }
         guard !fetchFromCoreData() else { return }
-        fetchTask = Task {
-            var ids: [Int] = []
-            charactersURL.forEach( {
-                let idStr = $0.matches(for: "\\d+")[0]
-                if let id = Int(idStr) {
-                    ids.append(id)
-                }
-            })
+        Task {
+            let ids: [Int] = getIds()
             let resultResponse = await networkService.fetchCharacters(at: ids)
-            let resultModel = resultResponse.map { response -> Result<CharacterModel, HTTPRequestError> in
+            var charactersModel: [CharacterModel] = []
+            var resultModels = resultResponse.map { response -> Result<CharacterModel, HTTPRequestError> in
                 switch response {
                 case .success(let result):
                     let characterModel: CharacterModel = .init(name: result.name,
                                                                gender: result.gender,
                                                                birthYear: result.birthYear,
                                                                homeworld: result.homeworld)
-                    let characterContext: Character = .init(context: persistenceController.container.viewContext)
-                    do {
-                        let fetchRequest: NSFetchRequest = Film.fetchRequest()
-                        fetchRequest.predicate = filmPredicate
-                        let films = try persistenceController.container.viewContext.fetch(fetchRequest)
-                        let film = films.first!
-                        characterContext.name = result.name
-                        characterContext.gender = result.gender
-                        characterContext.birthYear = result.birthYear
-                        characterContext.homeWorldURL = result.homeworld
-                        characterContext.addToCharacterToFilm(film)
-                        film.addToFilmToCharaters(characterContext)
-                    } catch {
-                        print(error.localizedDescription)
-                    }
+                    charactersModel.append(characterModel)
                     return .success(characterModel)
                 case .failure(let error):
                     return .failure(error)
                 }
             }
-            persistenceController.save()
-            await send(.didFetchResultsSuccessfully(resultModel))
+            sort(models: &resultModels)
+            persistenceController.saveCharacters(from: charactersModel, for: filmTitle)
+            await send(.didFetchResultsSuccessfully(resultModels))
         }
     }
     
-    func fetchFromCoreData() -> Bool {
-        let fetchRequest: NSFetchRequest = Character.fetchRequest()
-        let predicate: NSPredicate = .init(format: "ANY characterToFilm.title = %@", film.title)
-        fetchRequest.predicate = predicate
-        do {
-            let characters = try persistenceController.container.viewContext.fetch(fetchRequest)
-            let charactersModels = characters.map({ return CharacterModel.convertFromCoreData(model: $0) })
-            if characters.isEmpty {
-                return false
-            } else {
-                Task {
-                    print(charactersModels)
-                    var result: [Result<CharacterModel, HTTPRequestError>] = []
-                    charactersModels.forEach({ result.append(.success($0))})
-                    await send(.didFetchResultsSuccessfully(result))
-                }
-                return true
+    func sort(models: inout [Result<CharacterModel, HTTPRequestError>]) {
+        models = models.sorted(by: { first, second in
+            if case .success(let firstModel) = first, case .success(let secondModel) = second {
+                return firstModel.name < secondModel.name
             }
-        } catch let error as NSError {
-            print("Cloud not fetch: \(error), \(error.userInfo)")
             return false
+        })
+    }
+    
+    func getIds() -> [Int] {
+        var ids: [Int] = []
+        charactersURL.forEach( {
+            let idStr = $0.matches(for: "\\d+")[0]
+            if let id = Int(idStr) {
+                ids.append(id)
+            }
+        })
+        return ids
+    }
+    
+    func fetchFromCoreData() -> Bool {
+        guard let charactersModels = persistenceController.getCharacters(for: filmTitle) else { return false }
+        Task {
+            var result: [Result<CharacterModel, HTTPRequestError>] = []
+            charactersModels.forEach({ result.append(.success($0))})
+            await send(.didFetchResultsSuccessfully(result))
         }
+        return true
     }
     
 }

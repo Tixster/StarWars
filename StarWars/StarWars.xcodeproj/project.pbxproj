@@ -11,7 +11,7 @@
 		3E5E17192886824600F89FDC /* MainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5E17182886824600F89FDC /* MainScreen.swift */; };
 		3E5E171B2886824A00F89FDC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E5E171A2886824A00F89FDC /* Assets.xcassets */; };
 		3E5E171E2886824A00F89FDC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E5E171D2886824A00F89FDC /* Preview Assets.xcassets */; };
-		3E5E17202886824A00F89FDC /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5E171F2886824A00F89FDC /* Persistence.swift */; };
+		3E5E17202886824A00F89FDC /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5E171F2886824A00F89FDC /* PersistenceController.swift */; };
 		3E5E17232886824A00F89FDC /* StarWars.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3E5E17212886824A00F89FDC /* StarWars.xcdatamodeld */; };
 		3E5E172D2886863100F89FDC /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 3E5E172C2886863100F89FDC /* Networking */; };
 		3E5E17302886AB3300F89FDC /* StateMachineProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5E172F2886AB3300F89FDC /* StateMachineProtocol.swift */; };
@@ -34,12 +34,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3E5E17132886824600F89FDC /* StarWars.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StarWars.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E5E17132886824600F89FDC /* Star Wars - Test Technesis.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Star Wars - Test Technesis.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E5E17162886824600F89FDC /* StarWarsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarWarsApp.swift; sourceTree = "<group>"; };
 		3E5E17182886824600F89FDC /* MainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreen.swift; sourceTree = "<group>"; };
 		3E5E171A2886824A00F89FDC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3E5E171D2886824A00F89FDC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		3E5E171F2886824A00F89FDC /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		3E5E171F2886824A00F89FDC /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		3E5E17222886824A00F89FDC /* StarWars.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = StarWars.xcdatamodel; sourceTree = "<group>"; };
 		3E5E172A2886861800F89FDC /* Networking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Networking; path = Modules/Networking; sourceTree = "<group>"; };
 		3E5E172F2886AB3300F89FDC /* StateMachineProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachineProtocol.swift; sourceTree = "<group>"; };
@@ -86,7 +86,7 @@
 		3E5E17142886824600F89FDC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3E5E17132886824600F89FDC /* StarWars.app */,
+				3E5E17132886824600F89FDC /* Star Wars - Test Technesis.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -186,7 +186,7 @@
 			isa = PBXGroup;
 			children = (
 				3E6128F7288AD21F00C5972D /* CoreDataModels */,
-				3E5E171F2886824A00F89FDC /* Persistence.swift */,
+				3E5E171F2886824A00F89FDC /* PersistenceController.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -228,7 +228,7 @@
 				3E5E172C2886863100F89FDC /* Networking */,
 			);
 			productName = StarWars;
-			productReference = 3E5E17132886824600F89FDC /* StarWars.app */;
+			productReference = 3E5E17132886824600F89FDC /* Star Wars - Test Technesis.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -293,7 +293,7 @@
 				3E5E17302886AB3300F89FDC /* StateMachineProtocol.swift in Sources */,
 				3E6128FD288AD36F00C5972D /* Character+CoreDataProperties.swift in Sources */,
 				3E61290F288B015D00C5972D /* PlanetViewModel.swift in Sources */,
-				3E5E17202886824A00F89FDC /* Persistence.swift in Sources */,
+				3E5E17202886824A00F89FDC /* PersistenceController.swift in Sources */,
 				3E612900288AD3BF00C5972D /* CharactersScreen.swift in Sources */,
 				3E612907288AD86B00C5972D /* Film+CoreDataProperties.swift in Sources */,
 				3E612906288AD86B00C5972D /* Film+CoreDataClass.swift in Sources */,
@@ -358,7 +358,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -412,7 +412,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -428,7 +428,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"StarWars/Preview Content\"";
 				DEVELOPMENT_TEAM = 7MH8KA7J8V;
 				ENABLE_PREVIEWS = YES;
@@ -438,13 +438,14 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tilakirill.StarWars;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Star Wars - Test Technesis";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -457,7 +458,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"StarWars/Preview Content\"";
 				DEVELOPMENT_TEAM = 7MH8KA7J8V;
 				ENABLE_PREVIEWS = YES;
@@ -467,13 +468,14 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tilakirill.StarWars;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Star Wars - Test Technesis";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;

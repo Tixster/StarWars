@@ -8,13 +8,35 @@
 import SwiftUI
 
 struct PlanetScreen: View {
+    
+    @StateObject var viewModel: PlanetViewModel
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Group {
+            switch (viewModel.state) {
+            case .initial, .loading: ProgressView("Loading...")
+            case .empty: Text("No Results")
+            case .error: Text(viewModel.stateError?.localizedDescription ?? "")
+            case .results: resultScreen
+            }
+        }
+        .onAppear {
+            viewModel.send(.onAppear)
+        }
     }
 }
 
-struct PlanetScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        PlanetScreen()
+private extension PlanetScreen {
+    
+    var resultScreen: some View {
+        VStack(alignment: .leading) {
+            Text("Diameter: \(viewModel.data.diameter)")
+            Text("Population: \(viewModel.data.population)")
+            Text("Terrain: \(viewModel.data.terrain)")
+            Text("Gravity: \(viewModel.data.gravity)")
+            Text("Climate: \(viewModel.data.climate)")
+        }
+        .navigationTitle("Homeworld: \(viewModel.data.name)")
     }
+    
 }

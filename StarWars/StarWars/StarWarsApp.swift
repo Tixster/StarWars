@@ -10,12 +10,12 @@ import SwiftUI
 @main
 struct StarWarsApp: App {
     
+    @Environment(\.scenePhase) var scenePhase
+    
     private var persistenceController: PersistenceController {
         return .shared
     }
-        
-    @Environment(\.scenePhase) var scenePhase
-
+    
     var body: some Scene {
         WindowGroup {
             MainScreen(viewModel: MainViewModel())
@@ -26,8 +26,9 @@ struct StarWarsApp: App {
             case .background: persistenceController.save()
             case .inactive: persistenceController.save()
             case .active: return
-            @unknown default:return
+            @unknown default: return
             }
         }
     }
+ 
 }

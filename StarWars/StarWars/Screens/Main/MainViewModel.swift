@@ -7,7 +7,6 @@
 
 import Foundation
 import Networking
-import CoreData
 
 final class MainViewModel: StateMachine<MainViewModel.FilmsListState, MainViewModel.FilmsListEvent>  {
 
@@ -16,9 +15,11 @@ final class MainViewModel: StateMachine<MainViewModel.FilmsListState, MainViewMo
         super.init(.initial)
     }
     
+    // MARK: - PUBLIC VAR
     public var data: [FilmModel] = []
     public let networkService: NetworkServiceProtocol
-
+    
+    // MARK: - PRIVATE VAR
     private var persistenceController: PersistenceController {
         return PersistenceController.shared
     }
@@ -91,16 +92,9 @@ private extension MainViewModel {
                                                 producer: film.producer,
                                                 episode: film.episodeID,
                                                 charactersURL: film.charactersURL)
-                    let filmsContext: Film = .init(context: persistenceController.container.viewContext)
-                    filmsContext.title = film.title
-                    filmsContext.year = film.releaseDate
-                    filmsContext.director = film.director
-                    filmsContext.producer = film.producer
-                    filmsContext.episode = Int16(film.episodeID)
-                    filmsContext.charactersURL = film.charactersURL
                     return filmModel
                 }
-                persistenceController.save()
+                persistenceController.saveFilms(from: filmsModels)
                 filterFilms(&filmsModels)
                 await send(.didFetchResultsSuccessfully(filmsModels))
             case .failure(let error):
@@ -114,25 +108,11 @@ private extension MainViewModel {
     }
     
     func fetchFromCoreData() -> Bool {
-        let fetchRequest: NSFetchRequest = Film.fetchRequest()
-        let sort: NSSortDescriptor = .init(key: #keyPath(Film.episode), ascending: true)
-        fetchRequest.sortDescriptors = [sort]
-        do {
-            let films = try persistenceController.container.viewContext.fetch(fetchRequest)
-            let filmsModel = films.map({ return FilmModel.convertFromCoreData(model: $0) })
-            if films.isEmpty {
-                return false
-            } else {
-                Task {
-                    print(filmsModel)
-                    await send(.didFetchResultsSuccessfully(filmsModel))
-                }
-                return true
-            }
-        } catch let error as NSError {
-            print("Cloud not fetch: \(error), \(error.userInfo)")
-            return false
+        guard let filmsModel = persistenceController.getFilms() else { return false }
+        Task {
+            await send(.didFetchResultsSuccessfully(filmsModel))
         }
+        return true
     }
     
 }
