@@ -24,20 +24,35 @@ struct PersistenceController {
 
 }
 
+private extension PersistenceController {
+    
+    var viewContext: NSManagedObjectContext {
+        return container.viewContext
+    }
+    
+    var backgroundContext: NSManagedObjectContext {
+        return container.newBackgroundContext()
+    }
+    
+}
+
     // MARK: - FILMS METHODS
 extension PersistenceController {
     
     public func saveFilms(from films: [FilmModel]) {
         films.forEach({ film in
-            let filmsContext: Film = .init(context: container.viewContext)
-            filmsContext.title = film.title
-            filmsContext.year = film.year
-            filmsContext.director = film.director
-            filmsContext.producer = film.producer
-            filmsContext.episode = Int16(film.episode)
-            filmsContext.charactersURL = film.charactersURL
+            let context = backgroundContext
+            context.perform {
+                let filmsContext: Film = .init(context: context)
+                filmsContext.title = film.title
+                filmsContext.year = film.year
+                filmsContext.director = film.director
+                filmsContext.producer = film.producer
+                filmsContext.episode = Int16(film.episode)
+                filmsContext.charactersURL = film.charactersURL
+                save(context: context)
+            }
         })
-        save()
     }
     
     public func getFilms() -> [FilmModel]? {
@@ -45,7 +60,7 @@ extension PersistenceController {
         let sort: NSSortDescriptor = .init(key: #keyPath(Film.episode), ascending: true)
         fetchRequest.sortDescriptors = [sort]
         do {
-            let films = try container.viewContext.fetch(fetchRequest)
+            let films = try viewContext.fetch(fetchRequest)
             let filmsModels = films.map({ return FilmModel.convertFromCoreData(model: $0) })
             return films.isEmpty ? nil : filmsModels
         } catch let error as NSError {
@@ -64,18 +79,21 @@ extension PersistenceController {
         let filmPredicate: NSPredicate = .init(format: "%K == %@", #keyPath(Film.title), filmTitle)
         filmFetchRequest.predicate = filmPredicate
         do {
-            let films = try container.viewContext.fetch(filmFetchRequest)
+            let saveContext = backgroundContext
+            let films = try saveContext.fetch(filmFetchRequest)
             let film = films.first!
             models.forEach({ character in
-                let characterContext: Character = .init(context: container.viewContext)
-                characterContext.name = character.name
-                characterContext.gender = character.gender
-                characterContext.birthYear = character.birthYear
-                characterContext.homeWorldURL = character.homeworld
-                characterContext.addToCharacterToFilm(film)
-                film.addToFilmToCharaters(characterContext)
+                saveContext.perform {
+                    let characterContext: Character = .init(context: saveContext)
+                    characterContext.addToCharacterToFilm(film)
+                    characterContext.name = character.name
+                    characterContext.gender = character.gender
+                    characterContext.birthYear = character.birthYear
+                    characterContext.homeWorldURL = character.homeworld
+                    film.addToFilmToCharaters(characterContext)
+                    save(context: saveContext)
+                }
             })
-            save()
         } catch let error as NSError {
             print("Cloud not fetch: \(error), \(error.userInfo)")
         }
@@ -88,7 +106,7 @@ extension PersistenceController {
         fetchRequest.sortDescriptors = [sortDescriptor]
         fetchRequest.predicate = predicate
         do {
-            let characters = try container.viewContext.fetch(fetchRequest)
+            let characters = try viewContext.fetch(fetchRequest)
             let charactersModels = characters.map({ return CharacterModel.convertFromCoreData(model: $0) })
             return characters.isEmpty ? nil : charactersModels
         } catch let error as NSError {
@@ -104,20 +122,23 @@ extension PersistenceController {
     
     func savePlanet(from model: PlanetModel, for characterName: String) {
         do {
-            let planetContext: Planet = .init(context: container.viewContext)
+            let saveContext = backgroundContext
+            let planetContext: Planet = .init(context: saveContext)
             let fetchReques: NSFetchRequest = Character.fetchRequest()
             let predicate: NSPredicate = .init(format: "%K == %@", #keyPath(Character.name), characterName)
             fetchReques.predicate = predicate
-            let character: Character = try container.viewContext.fetch(fetchReques).first!
-            character.characterToHomeworld = planetContext
-            planetContext.addToHomeworldToCharacter(character)
-            planetContext.name = model.name
-            planetContext.diameter = model.diameter
-            planetContext.climate = model.climate
-            planetContext.gravity = model.gravity
-            planetContext.terrain = model.terrain
-            planetContext.population = model.population
-            save()
+            let character: Character = try saveContext.fetch(fetchReques).first!
+            saveContext.perform {
+                planetContext.addToHomeworldToCharacter(character)
+                planetContext.name = model.name
+                planetContext.diameter = model.diameter
+                planetContext.climate = model.climate
+                planetContext.gravity = model.gravity
+                planetContext.terrain = model.terrain
+                planetContext.population = model.population
+                character.characterToHomeworld = planetContext
+                save(context: saveContext)
+            }
         } catch {
             print(error.localizedDescription)
         }
@@ -128,7 +149,7 @@ extension PersistenceController {
         let predicate: NSPredicate = .init(format: "ANY homeworldToCharacter.name = %@", characterName)
         fetchRequest.predicate = predicate
         do {
-            let planets = try container.viewContext.fetch(fetchRequest)
+            let planets = try viewContext.fetch(fetchRequest)
             return planets.isEmpty ? nil : .convertFromCoreData(model: planets.first!)
         } catch let error as NSError {
             print("Cloud not fetch: \(error), \(error.userInfo)")
@@ -139,17 +160,14 @@ extension PersistenceController {
 }
 
 extension PersistenceController {
-    @discardableResult
-    public func save() -> Error? {
-        let conntext = container.viewContext
-        if conntext.hasChanges {
-            do {
-                try conntext.save()
-                return nil
-            } catch {
-                return error
-            }
+    
+    public func save(context: NSManagedObjectContext = PersistenceController.shared.viewContext) {
+        guard context.hasChanges else { return }
+        do {
+            try context.save()
+        } catch let error as NSError {
+            print("Saving Error: \(error.userInfo)")
         }
-        return nil
     }
+
 }
